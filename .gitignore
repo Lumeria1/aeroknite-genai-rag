@@ -1,0 +1,74 @@
+# ====================
+# SECRETS & ENV FILES
+# ====================
+# Block ALL .env variants except .env.example
+.env
+.env.local
+.env.*.local
+.env.production
+.env.staging
+.env.test
+!.env.example
+# Explicitly allow example files
+!.env.*.example
+
+# ====================
+# PYTHON
+# ====================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# ====================
+# TESTING & COVERAGE
+# ====================
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# ====================
+# TYPE CHECKING & LINTING
+# ====================
+.mypy_cache/
+.ruff_cache/
+.pytype/
+
+# ====================
+# OS-SPECIFIC
+# ====================
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# ====================
+# IDE / EDITORS
+# ====================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ====================
+# DOCKER & LOGS
+# ====================
+*.log
+docker-compose.override.yml
+
+
+# ====================
+# Other
+# ====================
+lock/
