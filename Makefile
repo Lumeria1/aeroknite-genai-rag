@@ -1,8 +1,8 @@
 # =============================================================================
-# AEROKNITE GENAI RAG - MAKEFILE
+# AEROKNITE RAG - MAKEFILE
 # =============================================================================
-# CI-safe: No venv activation needed (uses explicit tool paths)
-# Windows + WSL2 compatible
+# Developer commands for local workflow + CI/CD consistency
+# All commands assume .venv exists (run `make setup` first)
 # =============================================================================
 
 SHELL := /bin/bash
@@ -18,13 +18,13 @@ MYPY := $(VENV)/bin/mypy
 
 help:
 	@echo "========================================="
-	@echo "Aeroknite GenAI RAG - Available Commands"
+	@echo "Aeroknite RAG - Available Commands"
 	@echo "========================================="
 	@echo "Setup:"
-	@echo "  make setup            - Create .venv + install dev tools"
+	@echo "  make setup            - Create venv + install dev tools"
 	@echo ""
 	@echo "Code Quality:"
-	@echo "  make format           - Auto-format (black + ruff --fix)"
+	@echo "  make format           - Auto-format with black + ruff"
 	@echo "  make lint             - Check formatting + linting"
 	@echo "  make typecheck        - Run mypy type checks"
 	@echo ""
@@ -34,16 +34,16 @@ help:
 	@echo "  make test-integration - Run integration tests only"
 	@echo ""
 	@echo "Cleanup:"
-	@echo "  make clean            - Remove caches/artifacts"
+	@echo "  make clean            - Remove caches and artifacts"
 
 setup:
 	@echo "Creating virtual environment..."
 	python3 -m venv $(VENV)
 	@echo "Upgrading pip..."
-	$(PYTHON) -m pip install -U pip
+	$(PIP) install -U pip
 	@echo "Installing dev tools..."
 	$(PIP) install ruff black mypy pytest pytest-cov
-	@echo "✓ Setup complete"
+	@echo "✓ Setup complete. Activate with: source .venv/bin/activate"
 
 format:
 	@echo "Running black formatter..."
@@ -53,19 +53,19 @@ format:
 	@echo "✓ Formatting complete"
 
 lint:
-	@echo "Running ruff..."
+	@echo "Running ruff linter..."
 	$(RUFF) check .
-	@echo "Running black check..."
+	@echo "Running black formatter check..."
 	$(BLACK) --check .
 	@echo "✓ Lint checks passed"
 
 typecheck:
-	@echo "Running mypy..."
+	@echo "Running mypy type checker..."
 	$(MYPY) services libs
 	@echo "✓ Type checks passed"
 
 test:
-	@echo "Running tests..."
+	@echo "Running all tests..."
 	$(PYTEST)
 
 test-unit:
@@ -77,7 +77,7 @@ test-integration:
 	$(PYTEST) -m integration
 
 clean:
-	@echo "Cleaning caches..."
+	@echo "Cleaning caches and artifacts..."
 	rm -rf .pytest_cache .ruff_cache .mypy_cache htmlcov .coverage
 	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
-	@echo "✓ Clean complete"
+	@echo "✓ Cleanup complete"
