@@ -14,7 +14,7 @@ RUFF := $(VENV)/bin/ruff
 BLACK := $(VENV)/bin/black
 MYPY := $(VENV)/bin/mypy
 
-.PHONY: help setup format lint typecheck test test-unit test-integration clean
+.PHONY: help setup format lint typecheck test test-unit test-integration clean dev down logs ps
 
 help:
 	@echo "========================================="
@@ -67,17 +67,52 @@ typecheck:
 test:
 	@echo "Running tests..."
 	$(PYTEST)
+	@echo "✓ All tests passed"
 
 test-unit:
 	@echo "Running unit tests..."
 	$(PYTEST) -m unit
+	@echo "✓ Unit tests passed"
 
 test-integration:
 	@echo "Running integration tests..."
 	$(PYTEST) -m integration
+	@echo "✓ Integration tests passed"
 
 clean:
 	@echo "Cleaning caches..."
 	rm -rf .pytest_cache .ruff_cache .mypy_cache htmlcov .coverage
 	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
 	@echo "✓ Clean complete"
+
+dev:
+	@echo "Checking environment configuration..."
+	@if [ ! -f .env ]; then \
+		echo "⚠️  .env not found. Creating from .env.example..."; \
+		cp .env.example .env; \
+		echo ""; \
+		echo "📝 IMPORTANT: Edit .env with real credentials before Stage 3+."; \
+		echo "Press Ctrl+C to abort, or wait 5 seconds to continue..."; \
+		sleep 5; \
+	fi
+	@echo "Starting local stack (infra/docker-compose.yml)..."
+	docker compose -f infra/docker-compose.yml up -d --build
+	@echo "✓ Stack started"
+	@echo "Query Service: http://localhost:8000"
+	@echo "API Docs: http://localhost:8000/docs"
+
+down:
+	@echo "Stopping local stack..."
+	docker compose -f infra/docker-compose.yml down -v
+	@echo "✓ Stack stopped (volumes removed)"
+
+logs:
+	@echo "Tailing logs..."
+	docker compose -f infra/docker-compose.yml logs -f --tail=200
+	@echo "✓ Logs streaming ended"
+
+ps:
+	docker compose -f infra/docker-compose.yml ps
+	@echo "✓ Stack status displayed"
+
+# End of Makefile
