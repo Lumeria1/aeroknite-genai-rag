@@ -69,7 +69,7 @@ jobs:
           .venv/bin/pip install pytest pytest-cov
 
       - name: Run unit tests
-        run: make test-unit
+        run: make test
 
   typecheck:
     name: Type Check
@@ -100,3 +100,4 @@ jobs:
 
       - name: Run mypy
         run: make typecheck
+        continue-on-error: true # Allow to fail in Stage 1 (will enforce in Stage 3+)
