@@ -72,3 +72,22 @@ docker-compose.override.yml
 # Other
 # ====================
 lock/
+.cache/
+coverage.xml
+nosetests.xml
+pytest_cache/
+pip-log.txt
+pip-delete-this-directory.txt
+htmlcov/
+instance/
+celerybeat-schedule
+celerybeat.pid
+.scrapy
+docs/_build/
+.eggs/
+.coverage.*
+.cache
+.pyre/
+celerybeat-schedule
+memory/
+thumbs.db
