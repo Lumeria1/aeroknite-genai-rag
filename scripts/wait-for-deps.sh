@@ -14,8 +14,9 @@ COMPOSE_FILE="${1:-infra/docker-compose.yml}"
 echo "Waiting for docker compose services to be healthy..."
 echo "Using compose file: ${COMPOSE_FILE}"
 
+WAIT_FOR_DEPS_TIMEOUT_SECONDS=180  # 3 minutes
 SERVICES_TO_WAIT=("postgres" "redis" "query-service")
-deadline=$((SECONDS + 180))
+deadline=$((SECONDS + WAIT_FOR_DEPS_TIMEOUT_SECONDS))
 
 for svc in "${SERVICES_TO_WAIT[@]}"; do
   echo "→ Waiting for: ${svc}"
