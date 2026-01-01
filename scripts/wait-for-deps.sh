@@ -14,8 +14,25 @@ COMPOSE_FILE="${1:-infra/docker-compose.yml}"
 echo "Waiting for docker compose services to be healthy..."
 echo "Using compose file: ${COMPOSE_FILE}"
 
+# If a compose file argument was provided, shift it off so any remaining arguments
+# are treated as the list of services to wait for.
+if (( "$#" > 0 )); then
+  COMPOSE_FILE="$1"
+  shift
+else
+  COMPOSE_FILE="infra/docker-compose.yml"
+fi
+
 WAIT_FOR_DEPS_TIMEOUT_SECONDS=180  # 3 minutes
-SERVICES_TO_WAIT=("postgres" "redis" "query-service")
+
+# Allow callers to specify services explicitly as additional arguments:
+#   scripts/wait-for-deps.sh [compose-file] service1 service2 ...
+# If no services are provided, fall back to the existing default list.
+if (( "$#" > 0 )); then
+  SERVICES_TO_WAIT=("$@")
+else
+  SERVICES_TO_WAIT=("postgres" "redis" "query-service")
+fi
 deadline=$((SECONDS + WAIT_FOR_DEPS_TIMEOUT_SECONDS))
 
 for svc in "${SERVICES_TO_WAIT[@]}"; do
