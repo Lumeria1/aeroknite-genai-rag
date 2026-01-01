@@ -26,6 +26,7 @@ curl http://localhost:8000/ready
 
 ## Stop
 make down
+```
 
 ## Architecture
 
@@ -34,4 +35,3 @@ See docs/ARCHITECTURE.md.
 ## Deployment
 
 See docs/DEPLOYMENT.md.
-```
