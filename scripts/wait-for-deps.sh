@@ -33,6 +33,7 @@ fi
 
 for svc in "${SERVICES_TO_WAIT[@]}"; do
   echo "→ Waiting for: ${svc}"
+  start_time=$SECONDS
   deadline=$((SECONDS + WAIT_FOR_DEPS_TIMEOUT_SECONDS))
 
   while true; do
