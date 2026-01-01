@@ -30,10 +30,10 @@ if (( "$#" > 0 )); then
 else
   SERVICES_TO_WAIT=("postgres" "redis" "query-service")
 fi
-deadline=$((SECONDS + WAIT_FOR_DEPS_TIMEOUT_SECONDS))
 
 for svc in "${SERVICES_TO_WAIT[@]}"; do
   echo "→ Waiting for: ${svc}"
+  deadline=$((SECONDS + WAIT_FOR_DEPS_TIMEOUT_SECONDS))
 
   while true; do
     if (( SECONDS > deadline )); then
