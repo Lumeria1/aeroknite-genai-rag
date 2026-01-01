@@ -49,7 +49,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          'python -c "import urllib.request, os; port = int(os.environ.get(''PORT'', ''8000'')); urllib.request.urlopen(f''http://localhost:{port}/health'').read()"',
+          'python -c "import urllib.request; urllib.request.urlopen(''http://localhost:8000/health'').read()"',
         ]
       interval: 5s
       timeout: 3s
