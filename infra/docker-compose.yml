@@ -1,0 +1,78 @@
+name: aeroknite-genai-rag
+
+services:
+  postgres:
+    image: pgvector/pgvector:0.7.4-pg16
+    container_name: aeroknite-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-rag}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  redis:
+    image: redis:7-alpine
+    container_name: aeroknite-redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  query-service:
+    build:
+      context: ../services/query-service
+      dockerfile: Dockerfile
+    container_name: aeroknite-query-service
+    environment:
+      # Stage 2: only the minimum needed to boot + healthcheck
+      APP_ENV: ${APP_ENV:-local}
+      PORT: ${QUERY_SERVICE_PORT:-8000}
+    ports:
+      - "${QUERY_SERVICE_PORT:-8000}:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'python -c "import urllib.request; urllib.request.urlopen(''http://localhost:8000/health'').read()"',
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  ingestion-worker:
+    build:
+      context: ../services/ingestion-worker
+      dockerfile: Dockerfile
+    container_name: aeroknite-ingestion-worker
+    environment:
+      APP_ENV: ${APP_ENV:-local}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    # Minimal healthcheck: process alive
+    healthcheck:
+      test: ["CMD-SHELL", 'python -c "import sys; sys.exit(0)"']
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  postgres_data:

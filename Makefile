@@ -14,7 +14,7 @@ RUFF := $(VENV)/bin/ruff
 BLACK := $(VENV)/bin/black
 MYPY := $(VENV)/bin/mypy
 
-.PHONY: help setup format lint typecheck test test-unit test-integration clean
+.PHONY: help setup format lint typecheck test test-unit test-integration clean dev down logs ps
 
 help:
 	@echo "========================================="
@@ -81,3 +81,43 @@ clean:
 	rm -rf .pytest_cache .ruff_cache .mypy_cache htmlcov .coverage
 	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
 	@echo "✓ Clean complete"
+
+dev:
+	@echo "Checking environment configuration..."
+	@if [ ! -f .env ]; then \
+		echo "⚠️  .env not found. Creating from .env.example..."; \
+		cp .env.example .env; \
+		echo ""; \
+		echo "📝 IMPORTANT: Edit .env with real credentials before Stage 3+."; \
+		echo "Press Ctrl+C to abort, or wait 5 seconds to continue..."; \
+		sleep 5; \
+	fi
+	@echo "Starting local stack (infra/docker-compose.yml)..."
+	docker compose -f infra/docker-compose.yml up -d --build
+	@echo "✓ Stack started"
+	@echo "Query Service: http://localhost:8000"
+	@echo "Stack is running in the background. Use 'make down' to stop it."
+	@echo "To view logs, use 'make logs'."
+	@echo "To stop the stack, use 'make down'."
+	@echo "To see running containers, use 'make ps'."
+
+down:
+	@echo "Stopping local stack..."
+	docker compose -f infra/docker-compose.yml down -v
+	@echo "✓ Stack stopped (volumes removed)"
+	@echo "Local stack stopped. You can restart it with 'make dev'."
+
+logs:
+	@echo "Tailing logs..."
+	docker compose -f infra/docker-compose.yml logs -f --tail=200
+	@echo "✓ Logs streaming ended"
+	@echo "Press Ctrl+C to stop viewing logs."
+	@echo "Use 'make ps' to see running containers."
+	@echo "Use 'make down' to stop the stack."
+
+ps:
+	docker compose -f infra/docker-compose.yml ps
+	@echo "✓ Listed running containers"
+	@echo "Use 'make logs' to view logs."
+	@echo "Use 'make down' to stop the stack."
+	@echo "Use 'make dev' to start the stack."
