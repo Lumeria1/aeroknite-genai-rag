@@ -34,5 +34,5 @@ def test_query_service_health_ready() -> None:
     health = json.loads(fetch("/health"))
     ready = json.loads(fetch("/ready"))
 
-    assert "ok" in health
-    assert "ready" in ready
+    assert health.get("status") == "ok"
+    assert ready.get("status") == "ready"
