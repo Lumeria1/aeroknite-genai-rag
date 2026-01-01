@@ -25,7 +25,7 @@ def test_query_service_health_ready() -> None:
                 last_err = e
                 if attempt < max_retries:
                     time.sleep(retry_delay_seconds)
-        total_wait_seconds = retry_delay_seconds * max_retries
+        total_wait_seconds = retry_delay_seconds * (max_retries - 1)
         raise AssertionError(
             f"Failed to reach {path} after {max_retries} attempts "
             f"({total_wait_seconds}s total wait): {last_err}"
