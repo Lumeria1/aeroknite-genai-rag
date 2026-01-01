@@ -1,9 +1,10 @@
-import os
 import json
+import os
 import time
-import pytest
-import urllib.request
 import urllib.error
+import urllib.request
+
+import pytest
 
 
 @pytest.mark.integration
