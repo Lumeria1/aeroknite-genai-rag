@@ -13,7 +13,7 @@ def test_query_service_health_ready() -> None:
 
     base_url = "http://localhost:8000"
     max_retries = 30
-    delay_s = 1
+    retry_delay_seconds = 1
 
     def fetch(path: str) -> str:
         last_err: Exception | None = None
@@ -24,11 +24,11 @@ def test_query_service_health_ready() -> None:
             except (urllib.error.URLError, OSError) as e:
                 last_err = e
                 if attempt < max_retries:
-                    time.sleep(delay_s)
-        total_wait_s = delay_s * (max_retries - 1)
+                    time.sleep(retry_delay_seconds)
+        total_wait_seconds = retry_delay_seconds * max_retries
         raise AssertionError(
             f"Failed to reach {path} after {max_retries} attempts "
-            f"({total_wait_s}s total wait): {last_err}"
+            f"({total_wait_seconds}s total wait): {last_err}"
         )
 
     health = json.loads(fetch("/health"))
