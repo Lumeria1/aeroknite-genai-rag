@@ -51,7 +51,7 @@ services:
           "CMD",
           "python",
           "-c",
-          "import http.client, sys; conn = http.client.HTTPConnection('localhost', 8000, timeout=2); conn.request('GET', '/health'); resp = conn.getresponse(); sys.exit(0 if resp.status == 200 else 1)",
+          "import http.client, os, sys; port = int(os.environ.get('PORT', '8000')); conn = http.client.HTTPConnection('localhost', port, timeout=2); conn.request('GET', '/health'); resp = conn.getresponse(); sys.exit(0 if resp.status == 200 else 1)",
         ]
       interval: 5s
       timeout: 3s
