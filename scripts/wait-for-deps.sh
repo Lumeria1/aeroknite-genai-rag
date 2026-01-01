@@ -17,10 +17,7 @@ echo "Using compose file: ${COMPOSE_FILE}"
 # If a compose file argument was provided, shift it off so any remaining arguments
 # are treated as the list of services to wait for.
 if (( "$#" > 0 )); then
-  COMPOSE_FILE="$1"
   shift
-else
-  COMPOSE_FILE="infra/docker-compose.yml"
 fi
 
 WAIT_FOR_DEPS_TIMEOUT_SECONDS=180  # 3 minutes
