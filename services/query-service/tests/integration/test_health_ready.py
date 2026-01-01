@@ -23,7 +23,11 @@ def test_query_service_health_ready() -> None:
             except (urllib.error.URLError, OSError) as e:
                 last_err = e
                 time.sleep(delay_s)
-        raise AssertionError(f"Failed to reach {path} after {max_retries}s: {last_err}")
+        total_wait_s = delay_s * max_retries
+        raise AssertionError(
+            f"Failed to reach {path} after {max_retries} attempts "
+            f"({total_wait_s}s total wait): {last_err}"
+        )
 
     health = fetch("/health")
     ready = fetch("/ready")
