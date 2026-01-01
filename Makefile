@@ -98,9 +98,7 @@ dev:
 	@echo "Query Service: http://localhost:8000"
 	@echo "Stack is running in the background. Use 'make down' to stop it."
 	@echo "To view logs, use 'make logs'."
-	@echo "To stop the stack, use 'make down'."
 	@echo "To see running containers, use 'make ps'."
-
 down:
 	@echo "Stopping local stack..."
 	docker compose -f infra/docker-compose.yml down -v
@@ -109,15 +107,7 @@ down:
 
 logs:
 	@echo "Tailing logs..."
-	docker compose -f infra/docker-compose.yml logs -f --tail=200
-	@echo "✓ Logs streaming ended"
-	@echo "Press Ctrl+C to stop viewing logs."
-	@echo "Use 'make ps' to see running containers."
 	@echo "Press Ctrl+C to stop viewing logs."
 	@echo "Use 'make ps' to see running containers."
 	@echo "Use 'make down' to stop the stack."
 	docker compose -f infra/docker-compose.yml logs -f --tail=200
-	@echo "✓ Logs streaming ended"
-	@echo "Use 'make logs' to view logs."
-	@echo "Use 'make down' to stop the stack."
-	@echo "Use 'make dev' to start the stack."
