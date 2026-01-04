@@ -66,7 +66,7 @@ typecheck:
 
 test:
 	@echo "Running tests..."
-	$(PYTEST)
+	RUN_INTEGRATION=1 $(PYTEST)
 
 test-unit:
 	@echo "Running unit tests..."
