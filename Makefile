@@ -74,7 +74,7 @@ test-unit:
 
 test-integration:
 	@echo "Running integration tests..."
-	$(PYTEST) -m integration
+	RUN_INTEGRATION=1 $(PYTEST) -m integration
 
 clean:
 	@echo "Cleaning caches..."
