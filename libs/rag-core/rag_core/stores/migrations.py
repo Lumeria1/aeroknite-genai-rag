@@ -81,6 +81,9 @@ def ensure_schema(conn: psycopg.Connection[Any]) -> None:
         # Vector similarity index
         # Try HNSW first (requires pgvector >= 0.7, Postgres >= 16)
         # Fall back to IVFFlat if HNSW unavailable
+        logger.info("Creating vector similarity index...")
+
+        cur.execute("SAVEPOINT create_vector_index;")
         try:
             logger.info("Creating HNSW index (optimal for <1M vectors)...")
             cur.execute("""
@@ -88,14 +91,21 @@ def ensure_schema(conn: psycopg.Connection[Any]) -> None:
                 ON chunks USING hnsw (embedding vector_cosine_ops);
             """)
             logger.info("✓ HNSW index created")
+            cur.execute("RELEASE SAVEPOINT create_vector_index;")
         except psycopg.Error as e:
             logger.warning(f"HNSW index creation failed, falling back to IVFFlat: {e}")
+
+            # Roll back ONLY the failed HNSW statement
+            cur.execute("ROLLBACK TO SAVEPOINT create_vector_index;")
+            cur.execute("RELEASE SAVEPOINT create_vector_index;")
+
             cur.execute("""
                 CREATE INDEX IF NOT EXISTS chunks_embedding_ivfflat_idx
                 ON chunks USING ivfflat (embedding vector_cosine_ops)
                 WITH (lists = 100);
             """)
             logger.info("✓ IVFFlat index created (fallback)")
+
 
         # Document foreign key index
         cur.execute("""
