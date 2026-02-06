@@ -62,14 +62,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      - name: Install dev tools
+      - name: Install test dependencies
         run: |
           python -m venv .venv
           .venv/bin/python -m pip install -U pip
-          .venv/bin/pip install pytest pytest-cov
+          .venv/bin/pip install -e libs/rag-core[dev]
 
       - name: Run unit tests
-        run: make test
+        run: make test-unit
 
   typecheck:
     name: Type Check
@@ -125,11 +125,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
 
-      - name: Install test tooling
+      - name: Install test dependencies
         run: |
           python -m venv .venv
           .venv/bin/python -m pip install -U pip
-          .venv/bin/pip install pytest
+          .venv/bin/pip install -e libs/rag-core[dev]
 
       - name: Build images (BuildKit)
         run: |

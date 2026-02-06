@@ -66,9 +66,10 @@ Thumbs.db
 # ====================
 *.log
 docker-compose.override.yml
-
+docker-compose.dev.yml
 
 # ====================
 # Other
 # ====================
 lock/
+project-memory/

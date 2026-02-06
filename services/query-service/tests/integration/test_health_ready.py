@@ -21,7 +21,10 @@ def test_query_service_health_ready() -> None:
         for attempt in range(1, max_retries + 1):
             try:
                 with urllib.request.urlopen(f"{base_url}{path}", timeout=5) as resp:
-                    return resp.read().decode("utf-8")
+                    data = resp.read()
+                    assert isinstance(data, (bytes, bytearray))
+                    return data.decode("utf-8")
+
             except (urllib.error.URLError, OSError) as e:
                 last_err = e
                 if attempt < max_retries:
