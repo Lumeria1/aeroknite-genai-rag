@@ -106,7 +106,6 @@ def ensure_schema(conn: psycopg.Connection[Any]) -> None:
             """)
             logger.info("✓ IVFFlat index created (fallback)")
 
-
         # Document foreign key index
         cur.execute("""
             CREATE INDEX IF NOT EXISTS chunks_document_id_idx
