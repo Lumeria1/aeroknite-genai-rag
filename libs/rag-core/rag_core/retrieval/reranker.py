@@ -63,9 +63,15 @@ class Reranker:
 
         # Apply recency boost
         n = len(sorted_results)
-        for i, result in enumerate(sorted_results):
-            recency_factor = 1.0 - (i / n) * 0.1  # 1.0 → 0.9
-            result.score *= recency_factor
+
+        if n > 1:
+            for i, result in enumerate(sorted_results):
+                #Linearly scale from 1.0 (newest) to 0.9 (oldest), inclusive
+                recency_factor = 1.0 - (i / n) * 0.1  # 1.0 → 0.9
+                result.score *= recency_factor
+        else:
+            # Single result -> no change
+            sorted_results[0].score *= 1.0
 
         # Re-sort by adjusted score
         sorted_results.sort(key=lambda r: r.score, reverse=True)
