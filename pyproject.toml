@@ -3,13 +3,21 @@ name = "aeroknite-genai-rag"
 version = "0.1.0"
 requires-python = ">=3.12"
 
+# Core runtime dependencies for your RAG system
+dependencies = [
+    "psycopg[binary]",
+    "pgvector",
+    "fastapi",
+    "pydantic",
+]
+
 [project.optional-dependencies]
 dev = [
-  "black==26.1.0",
-  "ruff==0.15.0",
-  "mypy",
-  "pytest",
-  "pytest-cov",
+    "black==26.1.0",
+    "ruff==0.15.0",
+    "mypy",
+    "pytest",
+    "pytest-cov",
 ]
 
 [tool.black]
