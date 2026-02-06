@@ -6,10 +6,10 @@ Shared RAG primitives for Aeroknite GenAI system.
 
 This library provides core RAG functionality used by both `query-service` and `ingestion-worker`:
 
--   **Vector Store**: Postgres + pgvector CRUD operations
--   **Retrieval**: Similarity search with metadata filtering
--   **Grading**: LLM-based relevance and groundedness checking
--   **Schemas**: Shared data models (Chunk, Document, Citation)
+- **Vector Store**: Postgres + pgvector CRUD operations
+- **Retrieval**: Similarity search with metadata filtering
+- **Grading**: LLM-based relevance and groundedness checking
+- **Schemas**: Shared data models (Chunk, Document, Citation)
 
 ## Installation
 
@@ -27,6 +27,14 @@ from rag_core.schemas import Chunk
 
 # Initialize store
 store = PgVectorStore(connection_string="postgresql://...")
+
+# Store document
+doc = Document(
+    id="doc_001",
+    title="Example Document",
+    source_uri="doc1.pdf",
+)
+store.upsert_document(doc)
 
 # Store chunks
 chunk = Chunk(
@@ -57,8 +65,8 @@ RUN_INTEGRATION=1 pytest tests/integration -m integration
 
 ## Architecture
 
--   **stores/**: Vector database operations
--   **retrieval/**: Query logic, reranking, filtering
--   **grading/**: LLM-based evaluation
--   **schemas/**: Pydantic models
--   **utils/**: Helpers (text processing, retries, etc.)
+- **stores/**: Vector database operations
+- **retrieval/**: Query logic, reranking, filtering
+- **grading/**: LLM-based evaluation
+- **schemas/**: Pydantic models
+- **utils/**: Helpers (text processing, retries, etc.)
