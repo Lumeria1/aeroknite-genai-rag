@@ -66,7 +66,7 @@ class Reranker:
 
         if n > 1:
             for i, result in enumerate(sorted_results):
-                #Linearly scale from 1.0 (newest) to 0.9 (oldest), inclusive
+                # Linearly scale from 1.0 (newest) to 0.9 (oldest), inclusive
                 recency_factor = 1.0 - (i / n) * 0.1  # 1.0 → 0.9
                 result.score *= recency_factor
         else:
