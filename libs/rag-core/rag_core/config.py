@@ -25,5 +25,13 @@ def validate_embedding_dim(dim: int) -> None:
     """
     if dim not in SUPPORTED_EMBEDDING_DIMS:
         raise ValueError(
-            f"Unsupported embedding dimension: {dim}. " f"Supported: {SUPPORTED_EMBEDDING_DIMS}"
+            f"Unsupported embedding dimension: {dim}. "
+            f"Supported: {SUPPORTED_EMBEDDING_DIMS}"
         )
+
+# Embedding dimension (OpenAI standard)
+# Can be overridden via RAG_EMBEDDING_DIM environment variable
+EMBEDDING_DIM = int(os.getenv("RAG_EMBEDDING_DIM", "1536"))
+
+# 🔒 Validate at import time so downstream modules can assume correctness
+validate_embedding_dim(EMBEDDING_DIM)
