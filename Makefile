@@ -66,15 +66,15 @@ typecheck:
 
 test:
 	@echo "Running tests..."
-	RUN_INTEGRATION=1 $(PYTEST)
+	$(PYTEST)
 
 test-unit:
 	@echo "Running unit tests..."
-	$(PYTEST) -m unit
+	$(PYTEST) -m "not integration"
 
 test-integration:
 	@echo "Running integration tests..."
-	RUN_INTEGRATION=1 $(PYTEST) -m integration
+	$(PYTEST) -m integration
 
 clean:
 	@echo "Cleaning caches..."
