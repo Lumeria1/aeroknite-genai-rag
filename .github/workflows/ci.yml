@@ -69,7 +69,7 @@ jobs:
           .venv/bin/pip install -e libs/rag-core[dev]
 
       - name: Run unit tests
-        run: make test
+        run: make test-unit
 
   typecheck:
     name: Type Check
