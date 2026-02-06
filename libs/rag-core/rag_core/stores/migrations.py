@@ -42,8 +42,7 @@ def ensure_schema(conn: psycopg.Connection[Any]) -> None:
 
         # 2. Create documents table
         logger.info("Creating documents table...")
-        cur.execute(
-            """
+        cur.execute("""
             CREATE TABLE IF NOT EXISTS documents (
                 id TEXT PRIMARY KEY,
                 title TEXT NOT NULL,
@@ -53,8 +52,7 @@ def ensure_schema(conn: psycopg.Connection[Any]) -> None:
                 ingested_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
                 updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
             );
-        """
-        )
+        """)
 
         # 3. Create chunks table with dynamic embedding dimension
         logger.info(f"Creating chunks table (vector({EMBEDDING_DIM}))...")
@@ -62,9 +60,7 @@ def ensure_schema(conn: psycopg.Connection[Any]) -> None:
         # Construct SQL with embedding dimension (safe: EMBEDDING_DIM is validated int)
         dim_sql = sql.SQL(str(EMBEDDING_DIM))
 
-        cur.execute(
-            sql.SQL(
-                """
+        cur.execute(sql.SQL("""
                 CREATE TABLE IF NOT EXISTS chunks (
                     id TEXT PRIMARY KEY,
                     document_id TEXT NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
@@ -77,9 +73,7 @@ def ensure_schema(conn: psycopg.Connection[Any]) -> None:
                     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
                     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
                 );
-            """
-            ).format(dim=dim_sql)
-        )
+            """).format(dim=dim_sql))
 
         # 4. Create indexes for performance
         logger.info("Creating indexes...")
@@ -89,47 +83,37 @@ def ensure_schema(conn: psycopg.Connection[Any]) -> None:
         # Fall back to IVFFlat if HNSW unavailable
         try:
             logger.info("Creating HNSW index (optimal for <1M vectors)...")
-            cur.execute(
-                """
+            cur.execute("""
                 CREATE INDEX IF NOT EXISTS chunks_embedding_hnsw_idx
                 ON chunks USING hnsw (embedding vector_cosine_ops);
-            """
-            )
+            """)
             logger.info("✓ HNSW index created")
         except psycopg.Error as e:
             logger.warning(f"HNSW index creation failed, falling back to IVFFlat: {e}")
-            cur.execute(
-                """
+            cur.execute("""
                 CREATE INDEX IF NOT EXISTS chunks_embedding_ivfflat_idx
                 ON chunks USING ivfflat (embedding vector_cosine_ops)
                 WITH (lists = 100);
-            """
-            )
+            """)
             logger.info("✓ IVFFlat index created (fallback)")
 
         # Document foreign key index
-        cur.execute(
-            """
+        cur.execute("""
             CREATE INDEX IF NOT EXISTS chunks_document_id_idx
             ON chunks(document_id);
-        """
-        )
+        """)
 
         # Metadata JSONB index (GIN for fast JSON queries)
-        cur.execute(
-            """
+        cur.execute("""
             CREATE INDEX IF NOT EXISTS chunks_metadata_idx
             ON chunks USING gin (metadata);
-        """
-        )
+        """)
 
         # Timestamp indexes for time-based queries
-        cur.execute(
-            """
+        cur.execute("""
             CREATE INDEX IF NOT EXISTS chunks_created_at_idx
             ON chunks(created_at);
-        """
-        )
+        """)
 
     conn.commit()
     logger.info("✓ Schema initialization complete")
