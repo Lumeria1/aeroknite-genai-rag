@@ -41,8 +41,8 @@ setup:
 	python3 -m venv $(VENV)
 	@echo "Upgrading pip..."
 	$(PYTHON) -m pip install -U pip
-	@echo "Installing dev tools..."
-	$(PIP) install ruff black mypy pytest pytest-cov
+	@echo "Installing project + dev dependencies..."
+	$(PIP) install -e .[dev]
 	@echo "✓ Setup complete"
 
 format:
